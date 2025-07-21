@@ -9,20 +9,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Repozitoriyani klonlash
-      uses: actions/checkout@v3
+      - name: Repozitoriyani klonlash
+        uses: actions/checkout@v3
 
-- name: Deploy to server
-  uses: appleboy/ssh-action@v0.1.10
-  with:
-    host: ${{ secrets.HOST }}
-    username: ${{ secrets.USERNAME }}
-    key: ${{ secrets.SSH_KEY }}
-    script: |
-      cd /home/your-user/your-project-folder || exit 1
-      git pull origin main
-      docker stop nest-app || true
-      docker rm nest-app || true
-      docker build -t nest-app .
-      docker run -d --name nest-app -p 80:3000 nest-app
-
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /home/your-user/your-project-folder || exit 1
+            git pull origin main
+            docker stop nest-app || true
+            docker rm nest-app || true
+            docker build -t nest-app .
+            docker run -d --name nest-app -p 80:3000 nest-app
