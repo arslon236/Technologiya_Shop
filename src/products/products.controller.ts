@@ -133,10 +133,34 @@ export class ProductController {
   }
 
   // product.controller.ts
-
-  @Get('latest') 
+  @Get('latest')
+  @ApiOperation({ summary: 'Get latest added products' })
+  @ApiResponse({
+    status: 200,
+    description: 'Latest products successfully retrieved',
+    schema: {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: {
+          id: { type: 'number', example: 42 },
+          title: { type: 'string', example: 'iPhone 15 Pro' },
+          description: { type: 'string', example: 'Latest Apple flagship phone' },
+          price: { type: 'string', example: '1699.99' },
+          createdAt: { type: 'string', example: '2025-07-21T13:45:00.000Z' },
+          // boshqa kerakli fieldlarni ham qo‘shing:
+          categoryId: { type: 'number', example: 1 },
+          images: {
+            type: 'array',
+            items: { type: 'string', example: '1721510251378-iphone15.jpg' },
+          },
+        },
+      },
+    },
+  })
   getLatestProducts() {
     return this.productService.getLatestProducts();
   }
+
 
 }
