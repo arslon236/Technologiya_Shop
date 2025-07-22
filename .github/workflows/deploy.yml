@@ -38,12 +38,15 @@ jobs:
             sudo npm install -g pm2
           EOF
 
-      - name: Build and start project
+      - name: Debug build output
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd /home/${{ secrets.VPS_USER }}/phone_shop
+            echo "📦 Fayllar:"
+            ls -la
+            echo "📁 dist papka:"
+            ls -la dist || echo "❌ dist topilmadi"
+            echo "🧪 Buildni qo‘lda bajarish:"
             npm install
-            npm run build
-            pm2 delete phone_shop || true
-            pm2 start dist/main.js --name phone_shop
+            npm run build || echo "❌ Buildda xatolik"
           EOF
