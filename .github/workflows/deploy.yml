@@ -20,16 +20,20 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Copy files to server
+      - name: Copy source code to server
         run: |
-          scp -r ./.env ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/phone_shop/
-          scp -r ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/phone_shop/
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "mkdir -p /home/${{ secrets.VPS_USER }}/phone_shop"
+          scp -r ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/phone_shop
 
-      - name: Run deploy script on server
+      - name: Create .env file on server
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo '${{ secrets.ENV_FILE }}' > /home/${{ secrets.VPS_USER }}/phone_shop/.env"
+
+      - name: Install and restart app
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd /home/${{ secrets.VPS_USER }}/phone_shop
             npm install
-            pm2 stop phone_shop || true
+            pm2 delete phone_shop || true
             pm2 start dist/main.js --name phone_shop
           EOF
