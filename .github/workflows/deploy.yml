@@ -29,11 +29,12 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo '${{ secrets.ENV_FILE }}' > /home/${{ secrets.VPS_USER }}/phone_shop/.env"
 
-      - name: Install and restart app
+      - name: Build and run project
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
             cd /home/${{ secrets.VPS_USER }}/phone_shop
             npm install
+            npm run build              # <-- TypeScript build (creates dist/)
             pm2 delete phone_shop || true
             pm2 start dist/main.js --name phone_shop
           EOF
