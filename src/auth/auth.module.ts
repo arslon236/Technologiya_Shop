@@ -5,11 +5,15 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Auth } from './entity/auth.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Order } from 'src/order/entity/order.entity';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './guard/jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Auth]),
-    ConfigModule, // kerak
+    TypeOrmModule.forFeature([Auth, Order]),
+    ConfigModule,
+    PassportModule, // <== Muhim
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -20,7 +24,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy], // <== Muhim
   exports: [AuthService],
 })
 export class AuthModule {}

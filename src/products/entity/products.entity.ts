@@ -1,5 +1,6 @@
 import { Category } from "src/category/entity/category.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { OrderItem } from "src/order/entity/order.item.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 @Entity()
@@ -16,8 +17,12 @@ export class Products {
     @Column({ nullable: false })
     description: string
 
-    @Column({ nullable: false })
-    price: string
+    @Column({ type: 'float4', nullable: false })
+    price: number;
+
+
+    @Column()
+    quantity: number;
 
     @Column({ type: 'enum', enum: ['black', 'white', 'red', 'yellow', 'gray'], nullable: true })
     color?: string
@@ -37,6 +42,10 @@ export class Products {
     @Column("simple-array", { nullable: true })
     images: string[];
 
-    @CreateDateColumn()
+    @CreateDateColumn({ name: 'created_at' })
     createdAt: Date;
+
+
+    @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+    orderItems: OrderItem[];
 }

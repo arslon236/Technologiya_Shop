@@ -44,6 +44,7 @@ export class ProductController {
           example: 'Latest Apple iPhone with 256GB storage',
         },
         price: { type: 'string', example: '1499.99' },
+        quantity: { type: 'number', example: 10 }, // ✅ Qo‘shilgan qismi
         categoryId: { type: 'number', example: 1 },
         color: { type: 'string', example: 'black' },
         storage: { type: 'number', example: 256 },
@@ -60,7 +61,7 @@ export class ProductController {
           maxItems: 5,
         },
       },
-      required: ['title', 'description', 'price', 'categoryId'],
+      required: ['title', 'description', 'price', 'categoryId', 'quantity'], // ✅ quantity required qilingan
     },
   })
   @ApiResponse({ status: 201, description: 'Product successfully created' })
@@ -134,7 +135,7 @@ export class ProductController {
 
   // product.controller.ts
   @Get('latest')
-  @ApiOperation({ summary: 'Get latest added products' })
+  @ApiOperation({ summary: 'Get latest added products (default limit 10)' })
   @ApiResponse({
     status: 200,
     description: 'Latest products successfully retrieved',
@@ -145,14 +146,28 @@ export class ProductController {
         properties: {
           id: { type: 'number', example: 42 },
           title: { type: 'string', example: 'iPhone 15 Pro' },
-          description: { type: 'string', example: 'Latest Apple flagship phone' },
-          price: { type: 'string', example: '1699.99' },
-          createdAt: { type: 'string', example: '2025-07-21T13:45:00.000Z' },
-          // boshqa kerakli fieldlarni ham qo‘shing:
+          description: {
+            type: 'string',
+            example: 'Latest Apple flagship phone with A17 chip',
+          },
+          price: { type: 'number', example: '1699.99' },
           categoryId: { type: 'number', example: 1 },
+          color: { type: 'string', example: 'Black Titanium' },
+          storage: { type: 'number', example: 512 },
+          Screen_size: { type: 'number', example: 6.7 },
+          battery: { type: 'number', example: 4500 },
+          ram: { type: 'number', example: 8 },
+          quantity: { type: 'number', example: 5 },
+          createdAt: {
+            type: 'string',
+            example: '2025-07-21T13:45:00.000Z',
+          },
           images: {
             type: 'array',
-            items: { type: 'string', example: '1721510251378-iphone15.jpg' },
+            items: {
+              type: 'string',
+              example: '1721510251378-iphone15.jpg',
+            },
           },
         },
       },

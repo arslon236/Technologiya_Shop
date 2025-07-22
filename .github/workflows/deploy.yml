@@ -1,35 +1,35 @@
-name: Deploy to EC2
+name: Deploy to VPS
 
 on:
   push:
     branches:
-      - main  # Yoki master, loyihang qaysi branchda bo‘lsa
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Copy files via SSH
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          source: "."
-          target: "~/my-app"
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Run deploy commands on EC2
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            cd ~/my-app
+      - name: Copy files to server
+        run: |
+          scp -r ./.env ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/phone_shop/
+          scp -r ./ ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/home/${{ secrets.VPS_USER }}/phone_shop/
+
+      - name: Run deploy script on server
+        run: |
+          ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
+            cd /home/${{ secrets.VPS_USER }}/phone_shop
             npm install
-            npm run build
-            pm2 restart all || pm2 start dist/main.js --name=myapp
+            pm2 stop phone_shop || true
+            pm2 start dist/main.js --name phone_shop
+          EOF

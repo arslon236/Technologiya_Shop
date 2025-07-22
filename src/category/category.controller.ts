@@ -6,6 +6,7 @@ import {
   Patch,
   Body,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -18,12 +19,19 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 
-@ApiTags('Category') // Swaggerda kategoriya bo‘limi nomi
+// 🔐 import guards va roles
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { RolesGuard } from '../auth/guard/roles.guard';
+import { Roles } from '../auth/guard/roles.decorator';
+
+@ApiTags('Category')
 @Controller('category')
+@UseGuards(JwtAuthGuard, RolesGuard) // 🛡 Guard umumiy controllerga ishlaydi
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
+  @Roles('admin', 'superadmin') // faqat adminlar qo‘shadi
   @ApiOperation({ summary: 'Yangi kategoriya yaratish' })
   @ApiResponse({ status: 201, description: 'Kategoriya yaratildi' })
   @ApiBody({
@@ -57,6 +65,7 @@ export class CategoryController {
   }
 
   @Patch(':id')
+  @Roles('admin', 'superadmin') // faqat adminlar yangilaydi
   @ApiOperation({ summary: 'Kategoriya yangilash' })
   @ApiParam({ name: 'id', required: true, description: 'Kategoriya IDsi' })
   @ApiBody({ type: UpdateCategoryDto })
@@ -66,10 +75,11 @@ export class CategoryController {
   }
 
   @Delete(':id')
+  @Roles('admin', 'superadmin') // faqat adminlar o‘chiradi
   @ApiOperation({ summary: 'Kategoriya o‘chirish' })
   @ApiParam({ name: 'id', required: true, description: 'Kategoriya IDsi' })
-  @ApiResponse({ status: 200, description: 'O‘chirish funksiyasi yozilmagan' })
+  @ApiResponse({ status: 200, description: 'Kategoriya o‘chirildi' })
   async remove(@Param('id') id: string) {
-    return { message: 'Kategoriya o‘chirish funksiyasi hali yozilmagan' };
+    return this.categoryService.remove(+id); // aslida remove yozilishi kerak
   }
 }

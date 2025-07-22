@@ -9,6 +9,10 @@ import { Auth } from './auth/entity/auth.entity';
 import { Products } from './products/entity/products.entity';
 import { SliderModule } from './slider/slider.module';
 import { Slider } from './slider/entity/slider.entity';
+import { OrderModule } from './order/order.module';
+import { OrderItem } from './order/entity/order.item.entity';
+import { Order } from './order/entity/order.entity';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -20,13 +24,15 @@ import { Slider } from './slider/entity/slider.entity';
     username: "postgres",
     password: "arslon789",
     database: "phone_shop",
-    entities: [Category, Auth, Products, Slider],
+    entities: [Category, Auth, Products, Slider, OrderItem, Order],
     synchronize: true
   }),
     AuthModule,
     CategoryModule,
     ProductsModule,
-    SliderModule
+    SliderModule,
+    OrderModule,
+    PaymentModule
   ],
   controllers: [],
   providers: [],

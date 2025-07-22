@@ -65,12 +65,14 @@ export class ProductService {
     // product.service.ts
 
     async getLatestProducts(limit = 10) {
-        return this.productRepo.find({
-            order: {
-                createdAt: 'DESC',
-            },
+        const products = await this.productRepo.find({
+            order: { createdAt: 'DESC' },
             take: limit,
         });
+        return products;
     }
+
+
+
 
 }

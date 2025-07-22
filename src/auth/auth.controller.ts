@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -7,7 +7,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 @ApiTags('Auth') // Swagger bo‘lim nomi
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('register')
   @ApiOperation({ summary: 'Foydalanuvchini ro‘yxatdan o‘tkazish' })
@@ -18,9 +18,9 @@ export class AuthController {
       default: {
         summary: 'Oddiy foydalanuvchi',
         value: {
-          full_name: 'Ali Valiyev',
-          email: 'ali@example.com',
-          password: 'ali12345',
+          username: 'arslon',
+          email: 'arslonmaxmudov236@gmail.com',
+          password: 'arslon12345',
         },
       },
     },
@@ -38,13 +38,21 @@ export class AuthController {
       default: {
         summary: 'Login misoli',
         value: {
-          email: 'ali@example.com',
-          password: 'ali12345',
+          email: 'arslonmaxmudov236@gmail.com',
+          password: 'arslon12345',
         },
       },
     },
   })
   async login(@Body() dto: LoginDto) {
     return await this.authService.login(dto);
+  }
+
+
+  @Get('users')
+  @ApiOperation({ summary: 'Barcha foydalanuvchilarni olish' })
+  @ApiResponse({ status: 200, description: 'Foydalanuvchilar ro‘yxati' })
+  async getAllUsers() {
+    return this.authService.getAllUsers();
   }
 }

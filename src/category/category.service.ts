@@ -49,8 +49,19 @@ export class CategoryService {
             message: 'kategoriya yangilandi',
             category
         }
+    }
 
 
+    async remove(id: number) {
+        const category = await this.CategoryRepo.findOne({ where: { id } });
+
+        if (!category) {
+            throw new NotFoundException(`Kategoriya topilmadi: id=${id}`);
+        }
+
+        await this.CategoryRepo.remove(category);
+
+        return { message: `Kategoriya muvaffaqiyatli o‘chirildi`, id };
     }
 
 }
