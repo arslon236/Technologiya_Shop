@@ -22,6 +22,7 @@ export class AuthController {
           email: 'arslonmaxmudov236@gmail.com',
           password: 'arslon12345',
         },
+        
       },
     },
   })
