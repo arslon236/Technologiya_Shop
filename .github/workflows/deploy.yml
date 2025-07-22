@@ -29,12 +29,10 @@ jobs:
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} "echo '${{ secrets.ENV_FILE }}' > /home/${{ secrets.VPS_USER }}/phone_shop/.env"
 
-      - name: Build and run project
+      - name: Setup Node & PM2 on server
         run: |
           ssh ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }} << 'EOF'
-            cd /home/${{ secrets.VPS_USER }}/phone_shop
-            npm install
-            npm run build              # <-- TypeScript build (creates dist/)
-            pm2 delete phone_shop || true
-            pm2 start dist/main.js --name phone_shop
+            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+            sudo npm install -g pm2
           EOF
