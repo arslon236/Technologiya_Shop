@@ -67,6 +67,9 @@ export class AuthService {
     }
 
 
+
+
+    
  async getAllUsers(): Promise<Auth[]> {
   return this.AuthRepo.find({
     select: ['id', 'username', 'email', 'role'],
